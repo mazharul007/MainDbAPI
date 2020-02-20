@@ -32,7 +32,7 @@ namespace MainDbAPI.Controllers
         {
             List<CountryModel> countries = new List<CountryModel>();
 
-            using (SqlConnection conn = new SqlConnection(_conString)) 
+            using (SqlConnection conn = new SqlConnection(_conString))
             {
                 SqlCommand cmd = new SqlCommand("Select * FROM Country ORDER BY countryName", conn);
                 cmd.CommandType = CommandType.Text;
@@ -41,7 +41,7 @@ namespace MainDbAPI.Controllers
                 DataTable dt = new DataTable();
                 da.Fill(ds);
 
-                if (ds.Tables.Count > 0) 
+                if (ds.Tables.Count > 0)
                 {
                     dt = ds.Tables[0];
 
@@ -55,9 +55,9 @@ namespace MainDbAPI.Controllers
                     }
                 }
             }
-                
+
             return Ok(countries);
-            
+
         }
 
         // GET api/<controller>/5
@@ -96,9 +96,34 @@ namespace MainDbAPI.Controllers
 
 
         // POST api/<controller>
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [HttpPost("{countryName},{Description}")]
+        public IActionResult createData(string CountryName, string Description)
         {
+            List<CountryModel> createDatas= new List<CountryModel>();
+
+            using (SqlConnection con = new SqlConnection(_conString))
+            {
+                try
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Country(CountryName, Description) VALUES (@CountryName,@Description)", con);
+                    cmd.CommandType = CommandType.Text;
+                    CountryModel countryModel = new CountryModel();
+                    countryModel.CountryName = CountryName.ToString();
+                    countryModel.Description = Description.ToString();
+                    createDatas.Add(countryModel);
+
+
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+            }
+
+            return Ok(createDatas);
+
         }
 
         // PUT api/<controller>/5
